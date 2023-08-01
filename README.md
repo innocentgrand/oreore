@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # OreOreMVC
 
 # Demo
