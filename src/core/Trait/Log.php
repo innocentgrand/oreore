@@ -34,7 +34,7 @@ trait Log {
 			
 			if ($format === null)
 			{
-				$logText = sprintf("[%s] - %s  - %s\n", $this->_logType, Functions::date("Y-m-d H:i:s", true), $data);
+				$logText = sprintf("[%s] [%s] %s\n", $this->_logType, Functions::date("Y-m-d H:i:s", true), $data);
 			}
 
 			file_put_contents($path, $logText, FILE_APPEND);
@@ -45,9 +45,25 @@ trait Log {
 		}
 	}
 
-	public function writeErrorLog($data)
+	public function writeErrorLog($data, $name = "error.log")
 	{
-		var_dump("writeWErrorLog");
+		try {
+			$trace = debug_backtrace();	
+			if (!$this->_logFilePathBase)
+			{
+				$this->getLogDir();
+			}
+			$path = $this->_logFilePathBase.$name;
+			$traceString = Functions::backtrace2string($trace);
+			$logText = sprintf("[%s] [%s] %s\n\n[Trace]\n%s\n", "ERROR", Functions::date("Y-m-d H:i:s", true), $data, $traceString);
+
+			file_put_contents($path, $logText, FILE_APPEND);
+		}
+		catch(Exception $e) {
+			error_log($e->getMessage());
+			error_log($e->getTraceAsString());
+		}
+
 	}
 
 }

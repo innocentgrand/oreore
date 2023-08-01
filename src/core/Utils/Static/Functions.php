@@ -12,4 +12,16 @@ class Functions
 		}
 		return date($format) . $msStr;
 	}
+
+	static public function backtrace2string($trace)
+	{
+		$r = "";
+		$i = 0;
+		foreach($trace as $d)
+		{
+			$r .= sprintf("#%d %s(Line:%s) %s\n", $i, $d["file"], $d["line"], $d["function"]);
+		}
+		return $r;
+	}
+	
 }

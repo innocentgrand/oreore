@@ -19,14 +19,47 @@ class Router extends Core
 		}
 		catch(Exception $e)
 		{
-			
+			$this->writeErrorLog($e->getMessage());
 		}
 		
 	}
 
 	public function setPath($p)
 	{
-		$this->writeLog("a");
-		$this->vt($p);
+		$r = [];
+		$arg = "";
+		foreach(explode("/", $p) as $pd)
+		{
+			if ($pd)
+			{
+				if (empty($r["Ctrl"]))
+				{
+					$r["Ctrl"] = ucfirst($pd);
+				}
+				else if (empty($r["Method"]))
+				{
+					$r["Method"] = ucfirst($pd);
+				}
+				else if (empty($r["Args"]))
+				{
+					$arg = $pd;
+					$r["Args"][$arg] = null;
+				}
+				else if (!empty($r["Args"]))
+				{
+					if ($arg == "")
+					{
+						$arg = $pd;
+						$r["Args"][$arg] = null;
+					}
+					else 
+					{
+						$r["Args"][$arg] = $pd;
+						$arg = "";
+					}
+				}
+			}
+		}
+		return $r;
 	}
 }

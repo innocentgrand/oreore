@@ -33,5 +33,6 @@ if ($debug)
 $router = new Router();
 if (!empty($_SERVER["PATH_INFO"]))
 {
-	$router->setPath($_SERVER["PATH_INFO"]);
+	$routeData = $router->setPath($_SERVER["PATH_INFO"]);
+	
 }
