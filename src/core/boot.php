@@ -1,5 +1,5 @@
 <?php
-//namespace Ore;
+use Ore\Router;
 use Ore\Controller\Ctrl;
 use Ore\Utils\ConfigLoader;
 
@@ -13,6 +13,8 @@ $debug = false;
 if ($configBase['php']['debug'])
 {
 	$debug = true;
+	error_reporting(E_ALL);
+	ini_set('display_errors', "On");
 }
 
 if ($debug)
@@ -22,4 +24,14 @@ if ($debug)
 	$whoops->register();
 }
 
+if ($debug) 
+{
+	$c = new Ctrl();
+	//$c->vt($_SERVER);
+}
 
+$router = new Router();
+if (!empty($_SERVER["PATH_INFO"]))
+{
+	$router->setPath($_SERVER["PATH_INFO"]);
+}

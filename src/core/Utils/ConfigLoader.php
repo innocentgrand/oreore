@@ -21,9 +21,7 @@ class ConfigLoader
 		{
 			$jsonStr = file_get_contents($this->_configDir.$name);
 			try {
-				var_dump($jsonStr);
 				$arr = json_decode($jsonStr, true);
-				var_dump($arr);
 				if ($arr) 
 				{
 					return $arr;
@@ -40,6 +38,7 @@ class ConfigLoader
 				throw $v;
 			}
 		}
+		throw new Exception("ConfigFileNotFoud.");
 	}
 
 
