@@ -17,7 +17,7 @@ src/app/Controller/ ディレクトリを作ります。
 
 実装は以下の様に
 
-```
+```PHP
 namespace OApp\Controller;
 
 use Ore\Controller\Ctrl;
