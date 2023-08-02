@@ -29,3 +29,23 @@ class TestCtrl extends Ctrl
 のようにしてください。
 
 
+http://example.com/test/ とアクセスされた場合にこのTestCtrlが呼び出されます。
+また、この場合エンジンは「Index」メソッドを探します。
+
+```PHP
+public function Index()
+{
+}
+```
+
+メソッドでIndexメソッドを定義しておきます。
+
+URLアクセスがhttp://example.com/test/test/ である場合、エンジンは「Test」メソッドを探します。
+
+```PHP
+public function Test()
+{
+}
+```
+を定義しましょう。
+また、先頭が大文字になることに注意してください。
