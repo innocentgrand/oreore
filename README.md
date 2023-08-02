@@ -25,3 +25,6 @@ MIT License
 
 It is still in the process of being implemented.
 
+# Documents
+
+See the documets directory in this repository
