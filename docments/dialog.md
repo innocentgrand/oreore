@@ -4,5 +4,7 @@ classDiagram
 Core --|> Ctrl
 Core --|> Router
 RefrectionClass --|> Reflection
-Router --|> Log
+Router --|> TraitLog
+Core : __construct()
+Core : vt($d)
 ```
