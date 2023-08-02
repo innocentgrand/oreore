@@ -54,7 +54,8 @@ if (!empty($_SERVER["PATH_INFO"]))
 	$routeData = $router->setPath($_SERVER["PATH_INFO"]);
 	$ctrl = $routeData["Ctrl"] . "Ctrl";
 	$viewDirName = $routeData["Ctrl"];
-	$ctrlPlusPath = !empty($routeData["AppDir"]) ? $routeData["AppDir"] . "/" : "/";
+	$ctrlPlusPath = !empty($routeData["AppDir"]) ? ucfirst($routeData["AppDir"]) . "/" : "/";
+	$usePath = !empty($routeData["AppDir"]) ? ucfirst($routeData["AppDir"]) . "\\" : "";
 	$ctrlPath = $appDir.$ctrlPlusPath."Controller/".$ctrl.".php";
 	if (!file_exists($ctrlPath)) {
 		if ($debug) 
@@ -69,7 +70,7 @@ if (!empty($_SERVER["PATH_INFO"]))
 	}
 	// ToDo
 	// I'd like to be able to change namespace later.
-	$ctrl = "\\OApp\\Controller\\" . $ctrl;
+	$ctrl = "\\OApp\\{$usePath}Controller\\". $ctrl;
 	$ctrlObject = new $ctrl();
 	$viewPath = dirname(__DIR__) . "/app/View/{$viewDirName}/";	
 }
@@ -103,16 +104,25 @@ if ($methodParams)
 		$paramSetting[$k]['name'] = $param->getName();
 		$getType = $param->getType();
 		$paramSetting[$k]['type'] = $getType instanceof ReflectionNamedType ? $getType->getName() : "";
-		if (empty($routeData["Args"]))
+		if (!empty($routeData["Args"]))
 		{
-			throw new Exception("Method Arg Error ");
-		}
-		else if (empty($routeData["Args"][$paramSetting[$k]["name"]]))
-		{
-			throw new Exception("Method Arg Error ");
+			if (empty($routeData["Args"][$paramSetting[$k]["name"]]))
+			{
+				if (!$param->isOptional())
+				{
+					throw new Exception("Method Arg Error ");
+				}
+			}
 		}
 	}
-	$ctrlObject->$method(...$routeData["Args"]);
+	if (!empty($routeData["Args"]))
+	{
+		$ctrlObject->$method(...$routeData["Args"]);
+	}
+	else
+	{
+		$ctrlObject->$method();
+	}
 }
 else 
 {

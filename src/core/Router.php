@@ -122,7 +122,6 @@ class Router extends Core
 				break;
 			}
 		}
-		$this->vt($r);
 		return $r;
 	}
 
