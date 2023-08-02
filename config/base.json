@@ -1,5 +1,9 @@
 {
 	"php" : {
 		"debug" : true
+	},
+	"App" : {
+		"route"      : true,
+		"route_conf" : "api.json"
 	}
 }

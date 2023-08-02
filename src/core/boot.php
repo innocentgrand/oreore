@@ -33,12 +33,29 @@ if ($debug)
 }
 
 $router = new Router();
+
+// config app base
+$routeConfig = "";
+if ($configBase['App'])
+{
+	if ($configBase['App']['route'])
+	{
+		$routeConfig = $configBase['App']['route_conf'];
+	}
+}
+
+if ($routeConfig)
+{
+	$router->setRouterConfig($routeConfig);
+}
+
 if (!empty($_SERVER["PATH_INFO"]))
 {
 	$routeData = $router->setPath($_SERVER["PATH_INFO"]);
 	$ctrl = $routeData["Ctrl"] . "Ctrl";
 	$viewDirName = $routeData["Ctrl"];
-	$ctrlPath = $appDir."Controller/".$ctrl.".php";
+	$ctrlPlusPath = !empty($routeData["AppDir"]) ? $routeData["AppDir"] . "/" : "/";
+	$ctrlPath = $appDir.$ctrlPlusPath."Controller/".$ctrl.".php";
 	if (!file_exists($ctrlPath)) {
 		if ($debug) 
 		{
