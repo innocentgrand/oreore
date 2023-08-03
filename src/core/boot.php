@@ -110,7 +110,7 @@ if ($methodParams)
 			{
 				if (!$param->isOptional())
 				{
-					throw new Exception("Method Arg Error ");
+					throw new Exception("Method Arg Error " . $paramSetting[$k]["name"]);
 				}
 			}
 		}
