@@ -15,6 +15,11 @@ class ConfigLoader
 		}
 	}
 
+	public function canRead($name)
+	{
+		return file_exists($this->_configDir.$name);
+	}
+
 	public function load($name)
 	{
 		if (file_exists($this->_configDir.$name))
