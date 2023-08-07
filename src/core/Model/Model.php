@@ -43,6 +43,21 @@ class Model extends Core
 		$d = self::$_db->getDb()->select($this->table, $columnData, $where); 
 		return is_array($d) && count($d) > 0 ?  $d[0] : null;
 	}
+	
 
+	public function getDatas($where = [], $column = [])
+	{
+		$columnData = [];
+		if ($this->columns && !$column) 
+		{
+			$columnData = $this->columns;
+		}
+		else if ($column)
+		{
+			$columnData = $column;
+		}
+		$d = self::$_db->getDb()->select($this->table, $columnData, $where); 
+		return $d;
+	}
 
 }

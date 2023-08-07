@@ -78,7 +78,7 @@ class PostgreSQL extends Core implements Access
 			}
 		}
 		$this->_stmt = self::$_db->prepare($sql);
-		if ($wd)
+		if (!empty($wd))
 		{
 			foreach($wd["prepare"] as $mark => $value)
 			{
