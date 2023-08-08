@@ -7,9 +7,10 @@ interface Access
 	public function commit();
 	public function rollback();
 	public function inTran();
-	public function tableExists($tebleName);
-	public function createTable($structure);
+	public function tableExists($tableName);
+	public function query($sql);
+	public function execute($sql);
 	public function select($table, $colum = array(), $where = array(), $order = array(), $limit = array());
-	public function makeSelectStr($table, $colum = array(), $where = array(), $order = array(), $limit = array());
+	public function makeSelectData($table, $colum = array(), $where = array(), $order = array(), $limit = array());
 	public function makeWhereData($where = array());	
 }
