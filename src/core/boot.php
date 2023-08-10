@@ -96,6 +96,26 @@ catch(Exception $e) {
 }
 
 $ref = new Reflection($ctrlObject);
+
+/// Model
+$props = $ref->getProperties(ReflectionProperty::IS_PUBLIC);
+if ($props)
+{
+	if ($config->canRead("database.json"))
+	{
+		$modelConfig = $config->load("database.json");
+		foreach($props as $prop)
+		{
+			$propTypeName = $prop->getType()->getName();
+			if (is_subclass_of($propTypeName, "Ore\\Model\\Model"))
+			{
+				$propName = $prop->getName();
+				$ctrlObject->$propName = new $propTypeName($modelConfig);
+			}
+		}
+	}
+}
+
 $methodParams = $ref->getMethod($method)->getParameters();
 if ($methodParams)
 {
@@ -110,7 +130,7 @@ if ($methodParams)
 			{
 				if (!$param->isOptional())
 				{
-					throw new Exception("Method Arg Error ");
+					throw new Exception("Method Arg Error " . $paramSetting[$k]["name"]);
 				}
 			}
 		}
@@ -128,4 +148,6 @@ else
 {
 	$ctrlObject->$method();
 }
+
+
 

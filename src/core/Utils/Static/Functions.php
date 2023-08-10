@@ -23,5 +23,28 @@ class Functions
 		}
 		return $r;
 	}
+
+	static public function snakeToCamel($input)
+	{
+		$words = explode("_", $input);
+		$r = "";
+		foreach($words as $i => $w)
+		{
+			if ($i === 0)
+			{
+				$r .= $w;
+			}
+			else
+			{
+				$r .= ucfirst($w);
+			}
+		}
+		return $r;
+	}
 	
+	static public function camelToSnake($input)
+	{
+		$r = preg_replace("#([a-z])([A-Z])#", "$1_$2", $input);
+		return strtolower($r);
+	}
 }
