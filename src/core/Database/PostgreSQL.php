@@ -82,6 +82,23 @@ class PostgreSQL extends Core implements Access
 			throw $e;
 		}
 	}
+	
+	public function columnExists($tableName, $column)
+	{
+		try {
+			$sql = "SELECT 1 AS hits FROM information_schema.columns WHERE column_name = '{$column}' AND table_name = '{$tableName}'";
+			$this->_stmt = self::$_db->query($sql);
+			$d = $this->_stmt->fetchAll(PDO::FETCH_ASSOC);
+			$this->_stmt->closeCursor();
+			if (!empty($d[0]['hits'])) {
+				return true;
+			}
+			return false;
+		}
+		catch(Exception $e) {
+			throw $e;
+		}
+	}
 
 	public function query($sql)
 	{
@@ -107,10 +124,85 @@ class PostgreSQL extends Core implements Access
 		}
 	}
 
+	public function count($table, $where = array())
+	{
+		try {
+			return $this->select($table, ["COUNT(*) AS counter"], $where)[0]["counter"];
+		}
+		catch(Exception $e) {
+			throw $e;
+		}
+		
+	}
+
 	public function select($table, $colum = array(), $where = array(), $order = array(), $limit = array())
 	{
 		return $this->makeSelectData($table, $colum, $where, $order, $limit);
 	}
+	
+	public function insert($table, $set)
+	{
+		$sql = "INSERT INTO {$table} ";
+		$values = [];
+		$columns = [];
+		$prepares = [];
+		foreach($set as $c => $v)
+		{
+			$columns[] = $c;
+			$values[":" . $c."_prepare"] = $v;
+			$prepares[] = ":" . $c."_prepare";
+		}
+		$sql .= " (" . implode(",", $columns) . ") ";
+		$sql .= "VALUES(" . implode(",", $prepares) . ")";
+		try {
+			$this->_stmt = self::$_db->prepare($sql);
+			foreach($prepares as $prepare)
+			{
+				$this->_stmt->bindvalue($prepare, $values[$prepare]);
+			}
+			$this->_stmt->execute();
+			$lastId = self::$_db->lastInsertId();
+			$this->_stmt->closeCursor();
+		}
+		catch(Exception $e) {
+			throw $e;
+		}
+		return $lastId;
+	}
+	
+	public function update($table, $set, $where = array())
+	{
+		$sql = "UPDATE {$table} ";
+		$values = [];
+		$columns = [];
+		$prepares = [];
+		foreach($set as $c => $v)
+		{
+			$values[":" . $c."_update_prepare"] = $v;
+			$prepares[] = $c." = :" . $c."_update_prepare";
+		}
+		$sql .= " SET " . implode("," , $prepares);
+		$w = $this->makeWhereData($where);
+		$sql .= " WHERE " . $w["str"];
+		try {
+			$this->_stmt = self::$_db->prepare($sql);
+			foreach($values as $prepare => $value)
+			{
+				$this->_stmt->bindvalue($prepare, $value);
+			}
+			foreach($w["prepare"] as $prepare => $value)
+			{
+				$this->_stmt->bindvalue($prepare, $value);
+			}
+			$this->_stmt->execute();
+			$this->_stmt->closeCursor();
+		}
+		catch(Exception $e) {
+			throw $e;
+		}
+		return true;
+	}
+
 
 	public function makeSelectData($table, $colum = array(), $where = array(), $order = array(), $limit = array())
 	{

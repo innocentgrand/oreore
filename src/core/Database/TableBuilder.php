@@ -49,6 +49,10 @@ class TableBuilder extends Core
 			{
 				$tarr[$index] .= " NOT NULL";
 			}
+			if (!empty($struct["default"]))
+			{
+				$tarr[$index] .= " DEFAULT '{$struct["default"]}'";
+			}
 			$index++;
 		}
 		$t .= implode(",\n", $tarr);
@@ -69,6 +73,39 @@ class TableBuilder extends Core
 		}
 
 		return ["table" => $t, "pkey" => $p, "index" => $i];
+	}
+
+	public function getAlterStrings()
+	{
+		$alters = [];
+		$i = 0;
+		$columns = [];
+		foreach($this->_struct as $column => $struct)
+		{
+			$alters[$i] = "ALTER TABLE {$this->_tableName}";
+			if (!empty($struct["rename"]))
+			{
+				$alters[$i] .= " rename column {$column} TO {$struct["rename"]}";
+			}
+			else
+			{
+				if (!empty($struct["type"]))
+				{
+					$alters[$i] .= " ADD column {$column} " . $struct["type"];
+					$columns[$i] = $column;
+				}
+				if (!empty($struct["size"]))
+				{
+					$alters[$i] .= "(" . $struct["size"] . ")";
+				}
+				if (!empty($struct["default"]))
+				{
+					$alters[$i] .= " DEFAULT '{$struct["default"]}'";
+				}
+			}
+			$i++;
+		}
+		return array("alters" => $alters, "columns" => $columns);
 	}
 
 	public function getStruct()
@@ -108,6 +145,33 @@ class TableBuilder extends Core
 			}
 		}
 		return $this;	
+	}
+
+	public function alter($column)
+	{
+		if (empty($this->_struct[$column]))
+		{
+			$this->_struct[$column] = null;
+		}
+		return $this;
+	}
+
+	public function alterAdd($type, $size = null)
+	{
+		$key = array_key_last($this->_struct);
+		$this->_struct[$key]["type"] = $type;
+		if ($size !== null)
+		{
+			$this->_struct[$key]["size"] = $size;
+		}
+		return $this;
+	}
+
+	public function rename($name)
+	{
+		$key = array_key_last($this->_struct);
+		$this->_struct[$key]["rename"] = $name;
+		return $this;
 	}
 
 	public function isPrimary()

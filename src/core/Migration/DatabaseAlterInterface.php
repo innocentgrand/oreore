@@ -1,8 +1,7 @@
 <?php
 namespace Ore\Migration;
 
-interface DatabaseInterface
+interface DatabaseAlterInterface
 {
-	public function migrate();
 	public function alter();
 }

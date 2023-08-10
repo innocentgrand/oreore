@@ -66,7 +66,6 @@ trait Cache
 				}
 				$ftime = filemtime($path);
 				$ftime += $time;
-				$this->vt($ftime);
 				return time() < $ftime;
 			}
 			return false;
