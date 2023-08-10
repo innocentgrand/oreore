@@ -1,0 +1,10 @@
+{
+	"DB" : "PostgreSQL",
+	"Connection" : {
+		"DB"   : "test_test",
+		"Host" : "",
+		"Port" : "",
+		"User" : "yuta",
+		"Pass" : "yutasan"
+	}
+}
