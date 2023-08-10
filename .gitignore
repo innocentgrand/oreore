@@ -1,3 +1,5 @@
 logs/*
 vendor/*
 src/app/*
+config/database.json
+cache/*
