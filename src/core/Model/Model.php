@@ -129,4 +129,13 @@ class Model extends Core
 		return $id;
 	}
 
+	public function delete($id)
+	{
+		$where = [
+			$this->id => $id,
+		];
+		self::$_db->getDb()->delete($this->table, $where);
+		return true;
+	}
+
 }

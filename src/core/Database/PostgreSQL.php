@@ -202,7 +202,30 @@ class PostgreSQL extends Core implements Access
 		}
 		return true;
 	}
-
+	
+	public function delete($table, $where)
+	{
+		if (!$where)
+		{
+			throw new Exception("Deletion Impact area is too wide.");
+		}
+		$sql = "DELETE FROM {$table} ";
+		$w = $this->makeWhereData($where);
+		$sql .= " WHERE " . $w["str"];
+		try {
+			$this->_stmt = self::$_db->prepare($sql);
+			foreach($w["prepare"] as $prepare => $value)
+			{
+				$this->_stmt->bindvalue($prepare, $value);
+			}
+			$this->_stmt->execute();
+			$this->_stmt->closeCursor();
+		}
+		catch(Exception $e) {
+			throw $e;
+		}
+		return true;
+	}
 
 	public function makeSelectData($table, $colum = array(), $where = array(), $order = array(), $limit = array())
 	{
