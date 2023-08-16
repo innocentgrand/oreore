@@ -1,13 +1,6 @@
 {
-	"/api/v1" : {
-		"AppDir" : "v1",
-		"path" : {
-			"/" : {
-				"Ctrl" : "Test"
-			},
-			"/user" : {
-				"Ctrl" : "User"
-			}
-		}
+	"api" : 
+	{
+
 	}
 }

@@ -1,9 +1,10 @@
 {
 	"php" : {
-		"debug" : true
+		"debug" : false,
+		"debugger": false
 	},
 	"App" : {
-		"route"      : true,
-		"route_conf" : "api.json"
+		"route"      : false,
+		"route_conf" : ""
 	}
 }
