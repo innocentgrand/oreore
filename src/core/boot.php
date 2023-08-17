@@ -49,30 +49,42 @@ if ($routeConfig)
 	$router->setRouterConfig($routeConfig);
 }
 
+$useView = true;
 if (!empty($_SERVER["PATH_INFO"]))
 {
 	$routeData = $router->setPath($_SERVER["PATH_INFO"]);
 	$ctrl = $routeData["Ctrl"] . "Ctrl";
 	$viewDirName = $routeData["Ctrl"];
-	$ctrlPlusPath = !empty($routeData["AppDir"]) ? ucfirst($routeData["AppDir"]) . "/" : "/";
-	$usePath = !empty($routeData["AppDir"]) ? ucfirst($routeData["AppDir"]) . "\\" : "";
-	$ctrlPath = $appDir.$ctrlPlusPath."Controller/".$ctrl.".php";
-	if (!file_exists($ctrlPath)) {
-		if ($debug) 
+	if (preg_match("#^_____debugger#", $ctrl))
+	{
+		if ($configBase['php']['debug'] && $configBase['php']['debugger'])
 		{
-			throw new Exception("Controller Not Found");
-		}
-		else
-		{
-			//ToDo
-			//404Ctrl
+			$ctrl = "\\Ore\\Controller\\DebuggerCtrl";
+			$ctrlObject = new $ctrl();
 		}
 	}
-	// ToDo
-	// I'd like to be able to change namespace later.
-	$ctrl = "\\OApp\\{$usePath}Controller\\". $ctrl;
-	$ctrlObject = new $ctrl();
-	$viewPath = dirname(__DIR__) . "/app/View/{$viewDirName}/";	
+	else 
+	{
+		$ctrlPlusPath = !empty($routeData["AppDir"]) ? ucfirst($routeData["AppDir"]) . "/" : "/";
+		$usePath = !empty($routeData["AppDir"]) ? ucfirst($routeData["AppDir"]) . "\\" : "";
+		$ctrlPath = $appDir.$ctrlPlusPath."Controller/".$ctrl.".php";
+		if (!file_exists($ctrlPath)) {
+			if ($debug) 
+			{
+				throw new Exception("Controller Not Found");
+			}
+			else
+			{
+				//ToDo
+				//404Ctrl
+			}
+		}
+		$ctrl = "\\OApp\\{$usePath}Controller\\". $ctrl;
+		// ToDo
+		// I'd like to be able to change namespace later.
+		$ctrlObject = new $ctrl();
+		$viewPath = dirname(__DIR__) . "/app/View/{$viewDirName}/";	
+	}
 }
 else
 {
@@ -80,7 +92,9 @@ else
 	$ctrlObject = new $ctrl();
 	$viewPath = dirname(__DIR__) . "/app/View/Default/";
 }
-$ctrlObject->setViewPath($viewPath);
+
+$useView = $ctrlObject->getUseView();
+
 if (empty($routeData["Method"])) {
 	$method = "Index";
 }
@@ -88,11 +102,15 @@ else
 {
 	$method = $routeData["Method"];
 }
-try {
-	$ctrlObject->setViewFileName(strtolower($method) . ".tpl");
-}
-catch(Exception $e) {
-	throw $e;
+if ($useView) 
+{
+	try {
+		$ctrlObject->setViewPath($viewPath);
+		$ctrlObject->setViewFileName(strtolower($method) . ".tpl");
+	}
+	catch(Exception $e) {
+		throw $e;
+	}
 }
 
 $ref = new Reflection($ctrlObject);

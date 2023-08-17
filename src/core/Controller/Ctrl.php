@@ -2,15 +2,21 @@
 namespace Ore\Controller;
 
 use Ore\Core;
+use Ore\View\View;
 use Exception;
 
 class Ctrl extends Core
 {
 
-
+	protected $useView = true;
 	private $_viewPath;
 	private $_viewFilePathName;
 	protected $_assign;
+
+	public function getUseView()
+	{
+		return $this->useView;
+	}
 
 	public function setViewPath($path)
 	{
@@ -32,15 +38,13 @@ class Ctrl extends Core
 		try {
 			if ($render)
 			{
-				if ($this->_assign)
-				{
-					extract($this->_assign, EXTR_SKIP);
-				}
 				if (!file_exists($this->_viewFilePathName))
 				{
 					throw new Exception("Not Foud View  " . $this->_viewFilePathName);
 				}
-				require($this->_viewFilePathName);
+				$view = new View($this->_assign);
+				$view->setPath($this->_viewFilePathName);
+				$view->view();
 			}
 		}
 		catch(Exception $e) {
