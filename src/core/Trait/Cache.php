@@ -6,13 +6,33 @@ use Exception;
 trait Cache
 {
 	protected $_cacheFilePathBase = "";
-	
+
 	private function getCacheDir()
 	{
 		$this->_cacheFilePathBase = dirname(dirname(dirname(__DIR__))) . "/cache/";
 		if (!is_dir($this->_cacheFilePathBase))
 		{
 			throw new Exception("cache directry not found.");
+		}
+	}
+
+	public function checkAndCreateCacheDirectory($plusPath)
+	{
+		try {
+			if (!$this->_cacheFilePathBase)
+			{
+				$this->getCacheDir();
+			}
+
+			if (!is_dir($this->_cacheFilePathBase.$plusPath))
+			{
+				mkdir($this->_cacheFilePathBase.$plusPath, 0777, true);
+			}
+			$this->_cacheFilePathBase = $this->_cacheFilePathBase.$plusPath;
+
+		}
+		catch(Exception $e) {
+			throw $e;
 		}
 	}
 	
@@ -47,6 +67,36 @@ trait Cache
 			throw $e;
 		}
 		
+	}
+
+	public function getCacheFileTime($name)
+	{
+		try {
+			if (!$this->_cacheFilePathBase)
+			{
+				$this->getCacheDir();
+			}
+			$path = $this->_cacheFilePathBase.$name;
+			return filemtime($path);
+		}
+		catch(Exception $e) {
+			throw $e;
+		}
+	}
+
+	public function getCacheFilePath($name)
+	{
+		try {
+			if (!$this->_cacheFilePathBase)
+			{
+				$this->getCacheDir();
+			}
+			$path = $this->_cacheFilePathBase.$name;
+			return $path;	
+		}
+		catch(Exception $e) {
+			throw $e;
+		}
 	}
 	
 	public function checkCacheValid($name, $time = 0)
