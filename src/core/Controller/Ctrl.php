@@ -12,6 +12,7 @@ class Ctrl extends Core
 	private $_viewPath;
 	private $_viewFilePathName;
 	protected $_assign;
+	protected $viewStatic = false;
 
 	public function getUseView()
 	{
@@ -33,6 +34,31 @@ class Ctrl extends Core
 		$this->_assign[$name] = $data;
 	}
 
+	protected function viewJson($data = [])
+	{
+		if ($data) {
+			echo json_encode($data);
+		}
+		else
+		{
+			echo json_encode($this->_assig);
+		}
+		exit;
+	}
+
+	protected function isViewStatic()
+	{
+		try {
+			$view = new View($this->_assign);
+			$view->setPath($this->_viewFilePathName);
+			return $view->isStaticFileValid();
+		}
+		catch(Exception $e) {
+			throw $e;
+		}
+		return false;
+	}
+
 	protected function view($render = true)
 	{
 		try {
@@ -44,7 +70,14 @@ class Ctrl extends Core
 				}
 				$view = new View($this->_assign);
 				$view->setPath($this->_viewFilePathName);
-				$view->view();
+				if ($this->viewStatic)
+				{
+					$view->viewStatic();
+				}
+				else
+				{
+					$view->view();
+				}
 			}
 		}
 		catch(Exception $e) {

@@ -98,6 +98,21 @@ trait Cache
 			throw $e;
 		}
 	}
+
+	public function deleteCacheFile($name)
+	{
+		try {
+			if (!$this->_cacheFilePathBase)
+			{
+				$this->getCacheDir();
+			}
+			$path = $this->_cacheFilePathBase.$name;
+			unlink($path);	
+		}
+		catch(Exception $e) {
+			throw $e;
+		}
+	}
 	
 	public function checkCacheValid($name, $time = 0)
 	{
